@@ -43,7 +43,12 @@ public abstract class User {
 //Default constructor
 
 public User() {
+    this.userId="u_0000000000";
+    this.userName="";
+    this.userPassword="";
+    this.userRegisterTime="01-01-2000_00:00:00";
     this.userRole="customer";
+
 }
 
 // tự thêm constructor này vô vì class admin kê thừa cần viết super cóntructor
@@ -80,8 +85,6 @@ public User(String userId, String userName, String userPassword,
             + "\"user_role\": \"" + userRole + "\""
             + "}";
         }
-
-    //getter and setter
     public String getUserId() {
         return userId;
     }
@@ -112,5 +115,4 @@ public User(String userId, String userName, String userPassword,
     public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
-
 }
