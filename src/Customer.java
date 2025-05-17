@@ -16,10 +16,12 @@ public class Customer extends User {
     }
    
 }
-   // Default constructor
-   public Customer(){
-
-   }
+    // Default constructor
+    public Customer(){
+        super("u_0000000000", "", "", "01-01-2000_00:00:00","customer");
+        this.userEmail="example@gmail.com";
+        this.userMobile="";
+    }
    //Getter and Setter
    public String getUserEmail() {
        return userEmail;
