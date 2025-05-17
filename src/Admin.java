@@ -3,15 +3,15 @@ public class Admin extends User {
    public Admin(String userId, String userName, String userPassword,String userRegisterTime, String userRole) {
    super(userId,userName,userPassword,userRegisterTime);
    if (userRole == null || userRole.isEmpty() || !userRole.equals("admin")){
-       System.out.printf("Invalid userRole of user %s, auto set default into admin",userId);
+       System.out.printf("Invalid userRole for admin with userid %s, auto set default into admin",userId);
        super.setUserRole("admin");
    }
-   super.setUserRole("admin");
+   setUserRole("admin");
 }
 
    //Default constructor
    public Admin() {
-   // Implementation with default values
+      super("u_0000000000", "","", "01-01-2000_00:00:00","admin");
    }
 
    @Override
