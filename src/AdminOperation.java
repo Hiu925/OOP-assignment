@@ -1,7 +1,16 @@
-import java.util.Scanner;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class AdminOperation {
    
+    private static final String ADMIN_FILE_PATH = "data/admins.txt";
+    private final String DEFAULT_ADMIN_PASSWORD = "A123456";
+    private final String DEFAULT_ADMIN_USERNAME = "admin";
     private static AdminOperation instance;
 
     //private cóntructor
@@ -17,52 +26,42 @@ public class AdminOperation {
 
 //2.8.2 registerAdmin()
 
-Scanner scanner = new Scanner(System.in);
-
-    private Admin adminAccount; // thêm biến vô để lưu lại admin account
-
-    private boolean adminRegistered = false;  
     public void registerAdmin() {
-        if (!adminRegistered) 
-        {
-            //??? ko bt làm sao tạo admin acconut
-            //====================================
-            // tụ thêm vô tạo object là admin có thể sai đang nghi ngờ 
-            System.out.println("Registering admin account...");
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(ADMIN_FILE_PATH));
+            for (String line : lines) {
+                if (line.contains("\"user_role\":\"admin\"")) {
+                    // Admin already exists, no need to register again
+                    return;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error checking for existing admin: " + e.getMessage());
+        }
 
-            System.out.println("input user ID: ");
-            String userId=scanner.next();       
-
-            scanner.nextLine();
-            System.out.println("input user name: ");
-            String userName=scanner.next();
-                
-            scanner.nextLine();
-            System.out.println("input user password: ");
-            String userPassword=scanner.next();
-   
-            scanner.nextLine();
-            System.out.println("input registertime");
-            String userRegisterTime=scanner.next();
-            
-            scanner.nextLine();
-            System.out.println("input role");
-            String userRole=scanner.next();
-            
-         adminAccount = new Admin( userId, userName, userPassword,userRegisterTime, userRole);
-          //=====================================
+            //auto create admin account
+            String userId = UserOperation.generateUniqueUserId();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
+            String registerTime = sdf.format(new Date());
+            Admin admin = new Admin(userId, DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD, registerTime, "admin");
 
             System.out.println("Admin account created successfully.");
 
-            adminRegistered = true;  // Mark as registered
-        } else {
-            System.out.println("Admin account is already registered.");
+        // Encrypt password for storage
+        String encryptedPassword = UserOperation.encryptPassword(DEFAULT_ADMIN_PASSWORD);
+        
+        // Convert to string format for storage
+        String adminString = admin.toString();
+        // Replace the original password with encrypted password in the string
+        adminString = adminString.replace("\"user_password\":\"" + DEFAULT_ADMIN_PASSWORD + "\"", 
+                                         "\"user_password\":\"" + encryptedPassword + "\"");
+        
+    try {
+            Files.write(Paths.get(ADMIN_FILE_PATH), 
+                      (adminString + System.lineSeparator()).getBytes(), //ghi kí tự + xuống dòng phù hợp với hệ điều hành
+                      StandardOpenOption.APPEND); //ghi cuối file
+        } catch (IOException e) {
+            System.err.println("Error registering admin: " + e.getMessage());
         }
     }
-
-   // thêm getter để lấy giá trị admin account tạo ra trong hàm regíter admin
-    public Admin getAdminAccount() {
-        return adminAccount;
-    }
-
 }
