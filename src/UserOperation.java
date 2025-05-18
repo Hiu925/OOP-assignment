@@ -1,3 +1,4 @@
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,11 +12,12 @@ public class UserOperation {
 
     private static UserOperation instance;
 
-   // ko bt de lam gi 
-   private UserOperation(){
+    // ko bt de lam gi 
+    private UserOperation(){
 
-   }
+    }
 
+    //Singleton
     public static UserOperation getInstance() {
         if (instance == null) {
             instance = new UserOperation();
@@ -33,8 +35,9 @@ public class UserOperation {
         generatedIds.add(userId);
         return userId;
     }
-// encrypted password
-     public String encryptPassword(String userPassword) {
+    
+    // encrypted password
+    public static String encryptPassword(String userPassword) {
         
         if (userPassword == null || userPassword.isEmpty()) {
             return "^^$$"; // minimal format for empty password
@@ -44,7 +47,7 @@ public class UserOperation {
         int randLength = pwdLength * 2;
         String randomString = generateRandomAlphaNumeric(randLength);
 
-        StringBuilder encrypted = new StringBuilder("^^");// dung string buider de co the thay doi
+        StringBuilder encrypted = new StringBuilder("^^");// dùng stringbuider đỡ tốn dữ liệu
 
         for (int i = 0, j = 0; i < pwdLength; i++, j += 2) {
             encrypted.append(randomString.charAt(j));
@@ -53,11 +56,11 @@ public class UserOperation {
         }
 
         encrypted.append("$$");
-        return encrypted.toString(); // dung to string der lam encrypted thanh xau ko thay doi (immutable)
+        return encrypted.toString(); // trả về kiểu string cho hợp kiểu
     }
 
-   // "helper method" dung de ho tro cho encryptPassword method  (line 35)
-    private String generateRandomAlphaNumeric(int length) {
+    // "helper method" dung de ho tro cho encryptPassword method  (line 35)
+    private static String generateRandomAlphaNumeric(int length) {
         String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // tong bang chu cai vt thuong, vt hoa, so 0-9
         Random random = new Random();
         StringBuilder sb = new StringBuilder(length);
@@ -67,17 +70,18 @@ public class UserOperation {
         return sb.toString();
     }
 
-// decode encryted password
+    // decode encryted password
     public String decryptPassword(String encryptedPassword) {
     if (encryptedPassword == null || encryptedPassword.length() < 4) {
-        return "";  // Invalid or empty encrypted password, at least (^^),($$) —  4 characters
+        return "";  // Invalid or empty encrypted password, at least (^^ and $$) —  4 characters
     }
     
-    // Remove the prefix ^^ and suffix $$ extract the string tu 2 toi lenghth-2
+    // Remove the prefix ^^ and suffix $$ extract the string from 2 to lenghth-2
     String core = encryptedPassword.substring(2, encryptedPassword.length() - 2);
 
     StringBuilder originalPwd = new StringBuilder();
 
+    //Filter password
     // Every 3 chars: 2 random + 1 real password char=> increasement =3 each char in password
     for (int i = 2; i < core.length(); i += 3) {
         originalPwd.append(core.charAt(i));
@@ -100,12 +104,7 @@ public boolean checkUsernameExist(String userName) {
 
 // 2.6.6 check validation username
 public boolean validateUsername(String userName) {
-    if (userName == null) {
-        return false;
-    }
-    
-    // Check length
-    if (userName.length() < 5) {
+    if (userName == null || userName.length() < 5) {
         return false;
     }
 
@@ -121,7 +120,7 @@ public boolean validatePassword(String userPassword) {
     }
 
     // Regex: must contain at least one letter and one digit
-    boolean hasLetter = userPassword.matches(".*[a-zA-Z].*");
+    boolean hasLetter = userPassword.matches(".*[a-zA-Z].*");  //.* *. {check ở vị trí bất kì}
     boolean hasDigit = userPassword.matches(".*[0-9].*");
 
     return hasLetter && hasDigit;
@@ -137,7 +136,7 @@ public void registerUser(User user) {
     }
 }
 
-
+//input username and userpassword
 public User login(String userName, String userPassword) {
     if (userName == null || userPassword == null) {
         return null;
@@ -150,7 +149,7 @@ public User login(String userName, String userPassword) {
     }
 
     // Assuming User class has a method getEncryptedPassword()
-    String storedEncryptedPassword = encryptPassword (user.getUserPassword());
+    String storedEncryptedPassword = encryptPassword(user.getUserPassword());
 
     // Encrypt the provided password to compare
     String encryptedInputPassword = encryptPassword(userPassword);
