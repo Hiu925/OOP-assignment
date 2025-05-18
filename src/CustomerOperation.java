@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.nio.file.*;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ public class CustomerOperation {
         
     }
 
-   // 2.7.1 get instance
+   // 2.7.1 Singleton
     public static synchronized CustomerOperation getInstance() {
         if (instance == null) {
             instance = new CustomerOperation();
@@ -37,7 +38,7 @@ public class CustomerOperation {
     
     return matcher.matches();
 }
-   //2.7.3 validate Mobile
+   //2.7.3 validate MobileNum
    public boolean validateMobile(String userMobile) {
     if (userMobile == null) {
         return false;
@@ -50,11 +51,10 @@ public class CustomerOperation {
 
 //2.7.4. registerCustomer()
 
-public boolean registerCustomer(String userName, String userPassword,
-                                String userEmail, String userMobile) {
+public boolean registerCustomer(String userName, String userPassword,String userEmail, String userMobile) {
+
     // Validate inputs (implement your own username and password validation)
-    if (userName == null || userName.isEmpty() || userPassword == null || userPassword.isEmpty()
-        || !validateEmail(userEmail) || !validateMobile(userMobile)) {
+    if (!User.validatePassword(userPassword) || !User.validateUsername(userName) || !validateEmail(userEmail) || !validateMobile(userMobile)) {
         return false;
     }
 
@@ -82,7 +82,7 @@ public boolean registerCustomer(String userName, String userPassword,
     }
 
     // Generate unique user ID (e.g., UUID or a timestamp-based id)
-    String userId = generateUniqueUserId();
+    String userId = UserOperation.generateUniqueUserId();
 
     // Get current time as registration time
     String registerTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -100,12 +100,6 @@ public boolean registerCustomer(String userName, String userPassword,
         return false;
     }
 }
-// Helper method to generate unique user ID
-private String generateUniqueUserId() {
-    // Simple example: use current timestamp in milliseconds
-    return "U" + System.currentTimeMillis();
- }
-
 
  //2.7.5 updateProfile
 public boolean updateProfile(String attributeName, String value, Customer customerObject) {
